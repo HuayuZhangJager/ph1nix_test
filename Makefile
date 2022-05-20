@@ -30,11 +30,12 @@ SRC=./src
 BUILD:=./build
 MK_DIR_BUILD:=mkdir -p $(BUILD)
 
+# for Mac (not work for glibc like GNU stdio.h)
 # CC:=/opt/homebrew/bin/x86_64-elf-gcc
 # AS:=/opt/homebrew/bin/x86_64-elf-as
 # LD:=/opt/homebrew/bin/x86_64-elf-ld
 
-# aarch64 to x86
+# aarch64 to x86 (kali linux aarch64)
 CC:=/usr/bin/x86_64-linux-gnu-gcc
 AS:=/usr/bin/x86_64-linux-gnu-as
 NASM:=/usr/bin/nasm
