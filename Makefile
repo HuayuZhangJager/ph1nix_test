@@ -27,16 +27,18 @@
 # ***%@@@@@@@@@@@@%%+=:..:---#%%@@@@@@@%##%%%*
 
 SRC=./src
-BUILD:=../build
+BUILD:=./build
 MK_DIR_BUILD:=mkdir -p $(BUILD)
 
 # CC:=/opt/homebrew/bin/x86_64-elf-gcc
 # AS:=/opt/homebrew/bin/x86_64-elf-as
 # LD:=/opt/homebrew/bin/x86_64-elf-ld
 
-CC:=/usr/bin/gcc
-AS:=/usr/bin/as
-LD:=/usr/bin/ld
+# aarch64 to x86
+CC:=/usr/bin/x86_64-linux-gnu-gcc
+AS:=/usr/bin/x86_64-linux-gnu-as
+NASM:=/usr/bin/nasm
+LD:=/usr/bin/x86_64-linux-gnu-ld
 
 
 CFLAGS:= -m32
@@ -65,7 +67,7 @@ $(BUILD)/%.out: $(BUILD).out
 
 $(BUILD)/%.s: $(SRC)/%.c
 	$(MK_DIR_BUILD)
-	$(CC) $(CFLAGS) -S $< -o $(BUILD)/$@
+	$(CC) $(CFLAGS) -S $< -o $@
 
 .PHONY: test
-test: $(BUILD)/hello.s
+test: $(BUILD)/params.s
