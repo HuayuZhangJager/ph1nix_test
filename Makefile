@@ -26,9 +26,18 @@
 # ***%%@@@@@@@@@@@%%*=-..:--=%%%@@@@@@@##%%%#+
 # ***%@@@@@@@@@@@@%%+=:..:---#%%@@@@@@@%##%%%*
 
-TEST=.
-TEST_BUILD:=$(TEST)/build
-MK_TEST_BUILD:=mkdir -p $(TEST_BUILD)
+SRC=./src
+BUILD:=../build
+MK_DIR_BUILD:=mkdir -p $(BUILD)
+
+# CC:=/opt/homebrew/bin/x86_64-elf-gcc
+# AS:=/opt/homebrew/bin/x86_64-elf-as
+# LD:=/opt/homebrew/bin/x86_64-elf-ld
+
+CC:=/usr/bin/gcc
+AS:=/usr/bin/as
+LD:=/usr/bin/ld
+
 
 CFLAGS:= -m32
 # CFLAGS+= -fno-builtin # no built-in function in gcc
@@ -43,19 +52,20 @@ CFLAGS+= -mpreferred-stack-boundary=2 # no stack align
 # CFLAGS+= -fomit-frame-pointer # no stack frame
 CFLAGS:=$(strip ${CFLAGS})
 
-
-.PHONY: hello.s
-hello.s: hello.c
-	gcc $(CFLAGS) -S $< -o $@
-	$(MK_TEST_BUILD)
-	mv $@ $(TEST_BUILD)
-
-.PHONY: params.s
-params.s: params.c
-	gcc $(CFLAGS) -S $< -o $@
-	$(MK_TEST_BUILD)
-	mv $@ $(TEST_BUILD)
-
 .PHONY: clean
 clean:
-	rm -rf $(TEST_BUILD)
+	rm -rf $(BUILD)
+
+$(BUILD)/%.o: $(SRC)/%.S
+	$(MK_DIR_BUILD)
+	$(AS) --32 -gstabs $< -o $@
+
+$(BUILD)/%.out: $(BUILD).out
+	$(LD) -m elf_i386 -static $^ -o $@
+
+$(BUILD)/%.s: $(SRC)/%.c
+	$(MK_DIR_BUILD)
+	$(CC) $(CFLAGS) -S $< -o $(BUILD)/$@
+
+.PHONY: test
+test: $(BUILD)/hello.s
