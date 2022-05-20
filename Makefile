@@ -58,11 +58,17 @@ CFLAGS:=$(strip ${CFLAGS})
 clean:
 	rm -rf $(BUILD)
 
+# for GAS (GNU AS)
 $(BUILD)/%.o: $(SRC)/%.S
 	$(MK_DIR_BUILD)
 	$(AS) --32 -gstabs $< -o $@
 
-$(BUILD)/%.out: $(BUILD).out
+# for NASM
+$(BUILD)/%.o: $(SRC)/%.asm
+	$(MK_DIR_BUILD)
+	$(NASM) -f elf32 -gdwarf $< -o $@
+
+$(BUILD)/%.out: $(BUILD)/%.o
 	$(LD) -m elf_i386 -static $^ -o $@
 
 $(BUILD)/%.s: $(SRC)/%.c
@@ -70,4 +76,4 @@ $(BUILD)/%.s: $(SRC)/%.c
 	$(CC) $(CFLAGS) -S $< -o $@
 
 .PHONY: test
-test: $(BUILD)/params.s
+test: $(BUILD)/call.o
